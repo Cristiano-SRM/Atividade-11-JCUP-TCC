@@ -14,16 +14,28 @@ parser code {:
     Compilador compilador = new Compilador();
     compilador.compilar(args[0]);
   }
+   public static int intPow(int a, int b) { // 'a' é base 'b' é exponente
+    int result = 1;
+    for (int i = 0; i < b; i++) { // se repete X vezes conforme o tamanho do expoente
+        result *= a; // multiplica a base por ela mesmo como uma potencia
+        /*ex: 5^3 ->
+        1 iteração: result(1) = result * base = 1 * 5 = 5(novo result)
+        2 iteração: result(5) = result * base = 5 * 5 = 25(novo result)
+        3 iteração: result(25) = result * base = 25*5 = 125(novo result e fim da potencia, retorna valor ao jcup chamando este metodo
+        */
+    }
+    return result;
+}
 :}
 
 terminal Integer INTEIRO;
-terminal MAIS, MENOS, MENOSUNARIO, PTVIRG, PARENTESQ, PARENTDIR;
+terminal MAIS, MENOS, MULTIPLICA, DIVIDE, RESTO, POTENCIA, MENOSUNARIO, PTVIRG, PARENTESQ, PARENTDIR;
 
 non terminal inicio;
 non terminal Integer expr;
 
 precedence left MAIS, MENOS;
-precedence right MENOSUNARIO; // Menos unário com maior precedência, associatividade à direita.
+precedence right MENOSUNARIO, MULTIPLICA, DIVIDE, RESTO, POTENCIA; // Menos unário com maior precedência, associatividade à direita.
 
 start with inicio;
 
@@ -32,6 +44,10 @@ inicio ::= expr:e PTVIRG {: System.out.println(e); :}
 
 expr ::= expr:a MAIS expr:b             {: RESULT = a.intValue() + b.intValue(); :}
        | expr:a MENOS expr:b            {: RESULT = a.intValue() - b.intValue(); :}
+       | expr:a MULTIPLICA expr:b   {: RESULT = a.intValue() * b.intValue(); :}
+       | expr:a DIVIDE expr:b       {: RESULT = a.intValue() / b.intValue(); :}
+       | expr:a RESTO expr:b        {: RESULT = a.intValue() % b.intValue(); :}
+       | expr:a POTENCIA expr:b     {: RESULT = MeuParser.intPow(a.intValue(), b.intValue()); :}
        | MENOS expr:a                   {: RESULT = -a; :} %prec MENOSUNARIO       
        | PARENTESQ expr:a PARENTDIR     {: RESULT = a.intValue(); :}
        | INTEIRO:a                      {: RESULT = a.intValue(); :}
